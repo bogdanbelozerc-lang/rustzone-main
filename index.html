@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RustZone | Донат</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --dark-bg: #0a0a0a;
+            --dark-card: #1a1a1a;
+            --dark-border: #333;
+            --accent-red: #ff2e2e;
+            --accent-orange: #ff6b35;
+            --accent-gold: #ffd700;
+            --accent-platinum: #e5e4e2;
+            --text-light: #ffffff;
+            --text-gray: #b0b0b0;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a2a2a 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            position: relative;
+        }
+
+        .logo {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, var(--accent-red), var(--accent-orange));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 30px rgba(255, 46, 46, 0.5);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            color: var(--text-gray);
+            font-weight: 300;
+        }
+
+        .period-selector {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 50px;
+            background: var(--dark-card);
+            border-radius: 15px;
+            padding: 8px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            border: 2px solid var(--dark-border);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .period-btn {
+            padding: 15px 30px;
+            margin: 0 4px;
+            border: none;
+            background: transparent;
+            color: var(--text-gray);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            flex: 1;
+            max-width: 160px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .period-btn.active {
+            background: linear-gradient(45deg, var(--accent-red), var(--accent-orange));
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 46, 46, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .privileges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .privilege-card {
+            background: var(--dark-card);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid var(--dark-border);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        .privilege-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, var(--accent-red), var(--accent-orange));
+        }
+
+        .privilege-card.elite::before { background: linear-gradient(45deg, #b0b0b0, #808080); }
+        .privilege-card.deluxe::before { background: linear-gradient(45deg, var(--accent-orange), #ff8c00); }
+        .privilege-card.master::before { background: linear-gradient(45deg, var(--accent-gold), #ffa500); }
+        .privilege-card.legend::before { background: linear-gradient(45deg, var(--accent-platinum), #c0c0c0); }
+
+        .privilege-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(255, 46, 46, 0.2);
+            border-color: var(--accent-red);
+        }
+
+        .card-header {
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .privilege-name {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .privilege-card.elite .privilege-name { 
+            background: linear-gradient(45deg, #b0b0b0, #808080);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .privilege-card.deluxe .privilege-name { 
+            background: linear-gradient(45deg, var(--accent-orange), #ff8c00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .privilege-card.master .privilege-name { 
+            background: linear-gradient(45deg, var(--accent-gold), #ffa500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .privilege-card.legend .privilege-name { 
+            background: linear-gradient(45deg, var(--accent-platinum), #c0c0c0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .privilege-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .privilege-card.elite .privilege-icon { color: #b0b0b0; }
+        .privilege-card.deluxe .privilege-icon { color: var(--accent-orange); }
+        .privilege-card.master .privilege-icon { color: var(--accent-gold); }
+        .privilege-card.legend .privilege-icon { color: var(--accent-platinum); }
+
+        .price {
+            font-size: 3rem;
+            font-weight: 900;
+            margin: 25px 0;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .privilege-card.elite .price { color: #b0b0b0; }
+        .privilege-card.deluxe .price { color: var(--accent-orange); }
+        .privilege-card.master .price { color: var(--accent-gold); }
+        .privilege-card.legend .price { color: var(--accent-platinum); }
+
+        .period {
+            font-size: 1.1rem;
+            color: var(--text-gray);
+            margin-bottom: 35px;
+            font-weight: 600;
+        }
+
+        /* 3D КНОПКИ */
+        .donate-btn {
+            display: inline-block;
+            padding: 18px 40px;
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            box-shadow: 
+                0 8px 0 #000,
+                0 15px 20px rgba(0, 0, 0, 0.7);
+            width: 100%;
+            max-width: 240px;
+            transform: translateY(0);
+        }
+
+        .donate-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--accent-red), var(--accent-orange));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+            border-radius: 12px;
+        }
+
+        .donate-btn:hover {
+            transform: translateY(2px);
+            box-shadow: 
+                0 6px 0 #000,
+                0 10px 15px rgba(0, 0, 0, 0.7);
+        }
+
+        .donate-btn:hover::before {
+            opacity: 1;
+        }
+
+        .donate-btn:active {
+            transform: translateY(6px);
+            box-shadow: 
+                0 2px 0 #000,
+                0 5px 10px rgba(0, 0, 0, 0.7);
+        }
+
+        .privilege-card.elite .donate-btn::before { background: linear-gradient(45deg, #808080, #606060); }
+        .privilege-card.deluxe .donate-btn::before { background: linear-gradient(45deg, var(--accent-orange), #e55a00); }
+        .privilege-card.master .donate-btn::before { background: linear-gradient(45deg, var(--accent-gold), #e5a000); }
+        .privilege-card.legend .donate-btn::before { background: linear-gradient(45deg, var(--accent-platinum), #a0a0a0); }
+
+        .payment-methods {
+            text-align: center;
+            margin-top: 60px;
+            padding: 40px;
+            background: var(--dark-card);
+            border-radius: 20px;
+            border: 2px solid var(--dark-border);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        .payment-methods h2 {
+            margin-bottom: 30px;
+            font-size: 2rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .payment-icons {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .payment-icon {
+            font-size: 3.5rem;
+            color: var(--text-gray);
+            transition: all 0.3s ease;
+            filter: grayscale(100%);
+        }
+
+        .payment-icon:hover {
+            color: var(--accent-red);
+            transform: scale(1.3);
+            filter: grayscale(0%);
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 60px;
+            border-top: 2px solid var(--dark-border);
+            color: var(--text-gray);
+            font-size: 1rem;
+        }
+
+        .discord-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: var(--accent-red);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .discord-link:hover {
+            color: var(--accent-orange);
+        }
+
+        @media (max-width: 768px) {
+            .privileges-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .period-selector {
+                flex-direction: column;
+                gap: 10px;
+                border-radius: 15px;
+            }
+            
+            .period-btn {
+                max-width: 100%;
+            }
+            
+            .logo {
+                font-size: 2.8rem;
+            }
+            
+            .donate-btn {
+                padding: 15px 30px;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="logo">RustZone</h1>
+            <p class="subtitle">Приобретите привилегии для максимального опыта</p>
+            
+            <div class="period-selector">
+                <button class="period-btn active" data-period="15">15 ДНЕЙ</button>
+                <button class="period-btn" data-period="30">30 ДНЕЙ</button>
+                <button class="period-btn" data-period="forever">НАВСЕГДА</button>
+            </div>
+        </header>
+        
+        <main>
+            <div class="privileges-grid">
+                <!-- Elite Card -->
+                <div class="privilege-card elite" data-privilege="elite">
+                    <div class="card-header">
+                        <div class="privilege-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h2 class="privilege-name">Elite</h2>
+                    </div>
+                    <div class="price" data-15="50" data-30="80" data-forever="130">50 ₽</div>
+                    <div class="period">за 15 дней</div>
+                    <button class="donate-btn">Купить</button>
+                </div>
+                
+                <!-- Deluxe Card -->
+                <div class="privilege-card deluxe" data-privilege="deluxe">
+                    <div class="card-header">
+                        <div class="privilege-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h2 class="privilege-name">Deluxe</h2>
+                    </div>
+                    <div class="price" data-15="80" data-30="110" data-forever="160">80 ₽</div>
+                    <div class="period">за 15 дней</div>
+                    <button class="donate-btn">Купить</button>
+                </div>
+                
+                <!-- Master Card -->
+                <div class="privilege-card master" data-privilege="master">
+                    <div class="card-header">
+                        <div class="privilege-icon">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <h2 class="privilege-name">Master</h2>
+                    </div>
+                    <div class="price" data-15="120" data-30="150" data-forever="200">120 ₽</div>
+                    <div class="period">за 15 дней</div>
+                    <button class="donate-btn">Купить</button>
+                </div>
+                
+                <!-- Legend Card -->
+                <div class="privilege-card legend" data-privilege="legend">
+                    <div class="card-header">
+                        <div class="privilege-icon">
+                            <i class="fas fa-dragon"></i>
+                        </div>
+                        <h2 class="privilege-name">Legend</h2>
+                    </div>
+                    <div class="price" data-15="160" data-30="190" data-forever="240">160 ₽</div>
+                    <div class="period">за 15 дней</div>
+                    <button class="donate-btn">Купить</button>
+                </div>
+            </div>
+            
+            <div class="payment-methods">
+                <h2>Способы оплаты</h2>
+                <div class="payment-icons">
+                    <i class="fab fa-cc-visa payment-icon"></i>
+                    <i class="fab fa-cc-mastercard payment-icon"></i>
+                    <i class="fab fa-cc-paypal payment-icon"></i>
+                    <i class="fab fa-qiwi payment-icon"></i>
+                    <i class="fab fa-yandex payment-icon"></i>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>RustZone &copy; 2023 | Стань легендой!</p>
+            <a href="#" class="discord-link">Присоединяйтесь к нашему Discord</a>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const periodButtons = document.querySelectorAll('.period-btn');
+            const priceElements = document.querySelectorAll('.price');
+            const periodElements = document.querySelectorAll('.period');
+            
+            periodButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Удаляем активный класс у всех кнопок
+                    periodButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Добавляем активный класс к нажатой кнопке
+                    this.classList.add('active');
+                    
+                    // Получаем выбранный период
+                    const period = this.getAttribute('data-period');
+                    
+                    // Обновляем цены и текст периода
+                    priceElements.forEach(priceEl => {
+                        const newPrice = priceEl.getAttribute(`data-${period}`);
+                        priceEl.textContent = `${newPrice} ₽`;
+                    });
+                    
+                    periodElements.forEach(periodEl => {
+                        if (period === '15') {
+                            periodEl.textContent = 'за 15 дней';
+                        } else if (period === '30') {
+                            periodEl.textContent = 'за 30 дней';
+                        } else {
+                            periodEl.textContent = 'навсегда';
+                        }
+                    });
+                });
+            });
+            
+            // Добавляем обработчики для кнопок покупки
+            const donateButtons = document.querySelectorAll('.donate-btn');
+            donateButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const card = this.closest('.privilege-card');
+                    const privilegeName = card.querySelector('.privilege-name').textContent;
+                    const price = card.querySelector('.price').textContent;
+                    const period = document.querySelector('.period-btn.active').textContent;
+                    
+                    alert(`Вы выбрали привилегию "${privilegeName}" ${period} за ${price}. В ближайшее время с вами свяжется администратор для завершения оплаты.`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
